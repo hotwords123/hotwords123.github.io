@@ -66,13 +66,21 @@ GameManager.prototype.addStartTiles = function () {
 };
 
 // Adds a tile in a random position
-GameManager.prototype.addRandomTile = function () {
+GameManager.prototype.addRandomTile = function (choice) {
   if (this.grid.cellsAvailable()) {
-    var rand = Math.random();
-    var value;
-    if (rand < 0.6) value = 2;
-    else if (rand < 0.9) value = 4;
-    else value = 8;
+
+  	var rand = Math.random();
+  	var sum = 0;
+  	var value;
+
+  	for (var i in choice) {
+  		sum += choice[i];
+  		if (rand < sum) {
+  			value = +i;
+  			break;
+  		}
+  	}
+
     var tile = new Tile(this.grid.randomAvailableCell(), value);
 
     this.grid.insertTile(tile);
@@ -184,7 +192,15 @@ GameManager.prototype.move = function (direction) {
   });
 
   if (moved) {
-    this.addRandomTile();
+
+    this.addRandomTile({
+    	2: 1
+    });
+    this.addRandomTile({
+    	2: 0.9,
+    	4: 0.099,
+    	8: 0.001,
+    });
 
     if (!this.movesAvailable()) {
       this.over = true; // Game over!
