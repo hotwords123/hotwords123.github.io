@@ -17,28 +17,56 @@ State.prototype.toggle = function() {
 	this.current_player ^= 1;
 };
 
+State.from = function(obj) {
+	return Object.assign(Object.create(State.prototype), obj);
+};
+
 function GameManager() {
 	this.colors = ['red', 'blue'];
 	this.anim_time = 300;
 	this.UI = new UIManager();
 	this.renderer = new Renderer(this.anim_time);
+	this.storage = new LocalStorageManager();
 }
 
-GameManager.prototype.newGame = function(size) {
+GameManager.prototype.checkStorage = function() {
+	try {
+		let tmp = this.storage.get();
+		if (tmp) {
+			this.newGame(tmp.grid.size, tmp);
+		}
+	} catch (err) {
+		this.clearState();
+	}
+};
+
+GameManager.prototype.save = function() {
+	this.storage.save(this.state, this.grid);
+};
+
+GameManager.prototype.newGame = function(size, obj) {
 	this.size = size;
 	this.tiles_count = size * size;
 	this.animating = false;
-	this.grid = new Grid(size);
-	this.state = new State(this.grid);
+	if (obj) {
+		this.grid = Grid.from(obj.grid);
+		this.state = State.from(obj.state);
+	} else {
+		this.grid = new Grid(size);
+		this.state = new State(this.grid);
+	}
 	this.renderer.init(this.grid);
 	this.UI.on_start();
 	this.UI.update(this.state);
+	this.save();
 };
 
 GameManager.prototype.clearState = function() {
 	this.grid = null;
+	this.state = null;
 	this.UI.update(null);
 	this.UI.showMessage(false);
+	this.storage.clear();
 };
 
 GameManager.prototype.getLimit = function(r, c) {
@@ -100,6 +128,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	this.state.load(this.grid);
 
 	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
+		this.storage.clear();
 		this.UI.showMessage(true, this.colors[cp]);
 	}
 	if (next.length) {
@@ -109,6 +138,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	} else {
 		this.state.toggle();
 		this.animating = false;
+		this.save();
 	}
 
 	this.UI.update(this.state);
@@ -120,9 +150,12 @@ GameManager.prototype.clickTile = function(r, c) {
 
 	let self = this;
 	let arr = [];
+	let flag;
 	const cp = this.state.current_player;
 
-	if (this.addTile(r, c, cp)) {
+	flag = this.addTile(r, c, cp);
+
+	if (flag) {
 		this.animating = true;
 		setTimeout(function() {
 			self.bombTiles([[r, c]], cp);
@@ -132,5 +165,8 @@ GameManager.prototype.clickTile = function(r, c) {
 	}
 
 	this.state.load(this.grid);
+
+	if (!flag) this.save();
+
 	this.UI.update(this.state);
 };

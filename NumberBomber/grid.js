@@ -29,6 +29,10 @@ Grid.prototype.getTileCount = function(color) {
 	return res;
 };
 
+Grid.from = function(obj) {
+	return Object.assign(Object.create(Grid.prototype), obj);
+};
+
 function Tile(color, count) {
 	this.color = color;
 	this.count = count;

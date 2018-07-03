@@ -65,6 +65,7 @@ let UIManager = (function() {
 	ui.prototype.showMessage = function(isWin, param) {
 		this.$message.fadeIn(250);
 		if (isWin) {
+			this.sizeManager.hide();
 			this.$message_win.show();
 			this.$message_win_color.text(param);
 		} else {
@@ -100,13 +101,17 @@ let UIManager = (function() {
 			self.update();
 		});
 		this.$btn.click(function() {
-			self.$container.hide();
+			self.hide();
 			Game.newGame(self.current_size);
 		});
 	};
 
 	uism.prototype.show = function() {
 		this.$container.fadeIn(250);
+	};
+
+	uism.prototype.hide = function() {
+		this.$container.hide();
 	};
 
 	uism.prototype.update = function() {
