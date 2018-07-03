@@ -238,9 +238,10 @@ body {
 	position: relative;
 	width: 100%;
 	height: 100%;
+	transition: background .2s linear 0s;
 }
 
-.grid-cell-inner.tile-red.tile-1 {
+.grid-cell-inner.tile-red.tile-3 {
 	background: #ffe4e4;
 }
 
@@ -248,15 +249,20 @@ body {
 	background: #f7dddd;
 }
 
-.grid-cell-inner.tile-red.tile-3 {
+.grid-cell-inner.tile-red.tile-1 {
 	background: #f4cccc;
 }
 
-.grid-cell-inner.tile-red.tile-4 {
+.grid-cell-inner.tile-red.tile-0 {
 	background: #f0c2c2;
 }
 
-.grid-cell-inner.tile-blue.tile-1 {
+.grid-cell-inner.tile-red.tile-bomb {
+	transition: none !important;
+	animation: shineRed linear .1s 0s 5 forwards alternate;
+}
+
+.grid-cell-inner.tile-blue.tile-3 {
 	background: #e4e4ff;
 }
 
@@ -264,15 +270,20 @@ body {
 	background: #ddddf7;
 }
 
-.grid-cell-inner.tile-blue.tile-3 {
+.grid-cell-inner.tile-blue.tile-1 {
 	background: #ccccf4;
 }
 
-.grid-cell-inner.tile-blue.tile-4 {
+.grid-cell-inner.tile-blue.tile-0 {
 	background: #c2c2f0;
 }
 
-.grid-cell-inner:before {
+.grid-cell-inner.tile-blue.tile-bomb {
+	transition: none !important;
+	animation: shineBlue linear .1s 0s 5 forwards alternate;
+}
+
+.grid-cell-text {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -284,22 +295,6 @@ body {
 	transition: color .2s linear 0s;
 }
 
-.grid-cell:hover .grid-cell-inner:before {
+.grid-cell:hover .grid-cell-text {
 	color: #433;
-}
-
-.grid-cell-inner.tile-1:before {
-	content: '1';
-}
-
-.grid-cell-inner.tile-2:before {
-	content: '2';
-}
-
-.grid-cell-inner.tile-3:before {
-	content: '3';
-}
-
-.grid-cell-inner.tile-4:before {
-	content: '4';
 }

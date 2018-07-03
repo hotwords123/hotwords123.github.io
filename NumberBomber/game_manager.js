@@ -12,15 +12,14 @@ State.prototype.load = function(grid) {
 	this.tiles_blue = grid.getTileCount(1);
 };
 
-State.prototype.toggle = function(grid) {
+State.prototype.toggle = function() {
 	this.step ++;
 	this.current_player ^= 1;
-	this.load(grid);
 };
 
 function GameManager() {
 	this.colors = ['red', 'blue'];
-	this.anim_time = 200;
+	this.anim_time = 300;
 	this.UI = new UIManager();
 	this.renderer = new Renderer(this.anim_time);
 }
@@ -28,6 +27,7 @@ function GameManager() {
 GameManager.prototype.newGame = function(size) {
 	this.size = size;
 	this.tiles_count = size * size;
+	this.animating = false;
 	this.grid = new Grid(size);
 	this.state = new State(this.grid);
 	this.renderer.init(this.grid);
@@ -59,8 +59,9 @@ GameManager.prototype.renderTile = function(r, c) {
 	this.renderer.updateTile(r, c, this.getTile(r, c));
 }
 
-GameManager.prototype.setTile = function(r, c, color, count) {
-	this.grid.cells[r][c] = new Tile(color, count);
+GameManager.prototype.resetTile = function(r, c) {
+	let tile = this.getTile(r, c);
+	tile.count -= this.getLimit(r, c);
 	this.renderTile(r, c);
 }
 
@@ -72,64 +73,62 @@ GameManager.prototype.addTile = function(r, c, color) {
 	let tile = this.getTile(r, c);
 	++tile.count;
 	tile.color = color;
-	let flag = this.canExplode(r, c);
-	if (flag) {
-		tile.count = 1;
-	}
 	this.renderTile(r, c);
-	return flag;
+	return this.canExplode(r, c);
+};
+
+GameManager.prototype.bombTiles = function(queue, cp) {
+
+	const vectors = [[0, 1], [0, -1], [1, 0], [-1, 0]];
+	let next = [];
+	let self = this;
+
+	queue.forEach(function(a) {
+		if (!self.canExplode(a[0], a[1])) return;
+		self.resetTile(a[0], a[1]);
+		vectors.forEach(function(v) {
+			let o = [a[0] + v[0], a[1] + v[1]];
+			if (self.isIn(o[0], o[1]) && self.addTile(o[0], o[1], cp)) {
+				next.push(o);
+			}
+		});
+	});
+
+	this.state.load(this.grid);
+
+	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
+		this.UI.showMessage(true, this.colors[cp]);
+	} else {
+		if (next.length) {
+			setTimeout(function() {
+				self.bombTiles(next, cp);
+			}, this.anim_time);
+		} else {
+			this.state.toggle();
+			this.animating = false;
+		}
+	}
+
+	this.UI.update(this.state);
 };
 
 GameManager.prototype.clickTile = function(r, c) {
 
-	if (this.grid.cells[r][c].color != this.state.current_player) return;
+	if (this.animating || this.grid.cells[r][c].color != this.state.current_player) return;
 
 	let self = this;
+	let arr = [];
 	const cp = this.state.current_player;
-	let win = false;
 
 	if (this.addTile(r, c, cp)) {
-
-		let current = [[r, c]], next = [];
-		const vectors = [[0, 1], [0, -1], [1, 0], [-1, 0]];
-		let bombed = [], bombed_cnt = 0;
-
-		for (let i = 0; i < this.size; ++i) {
-			let arr = [];
-			for (let j = 0; j < this.size; ++j) {
-				arr.push(false);
-			}
-			bombed.push(arr);
-		}
-
-		while (current.length) {
-			current.forEach(function(a) {
-				if (!bombed[a[0]][a[1]]) {
-					bombed[a[0]][a[1]] = true;
-					++bombed_cnt;
-				}
-				vectors.forEach(function(v) {
-					let o = [a[0] + v[0], a[1] + v[1]];
-					if (self.isIn(o[0], o[1]) && self.addTile(o[0], o[1], cp)) {
-						next.push(o);
-					}
-				});
-			});
-			if (bombed_cnt >= this.tiles_count) {
-				win = true;
-				break;
-			}
-			current = next;
-			next = [];
-		}
+		this.animating = true;
+		setTimeout(function() {
+			self.bombTiles([[r, c]], cp);
+		}, this.anim_time);
+	} else {
+		this.state.toggle();
 	}
 
-	this.state.toggle(this.grid);
+	this.state.load(this.grid);
 	this.UI.update(this.state);
-
-	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) win = true;
-
-	if (win) {
-		this.UI.showMessage(true, this.colors[cp]);
-	}
 };

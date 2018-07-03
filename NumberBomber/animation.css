@@ -7,3 +7,21 @@
 		transform: scale(1, 1);
 	}
 }
+
+@keyframes shineRed {
+	from {
+		background: #ffffff;
+	}
+	to {
+		background: #edb9b9;
+	}
+}
+
+@keyframes shineBlue {
+	from {
+		background: #ffffff;
+	}
+	to {
+		background: #b9b9ed;
+	}
+}

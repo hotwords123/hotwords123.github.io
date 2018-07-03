@@ -1,9 +1,8 @@
 
 'use strict';
 
-function Renderer(anim_time) {
+function Renderer() {
 	this.$grid_container = $('.grid-container');
-	this.anim_time = anim_time;
 }
 
 Renderer.prototype.init = function(grid) {
@@ -18,8 +17,9 @@ Renderer.prototype.init = function(grid) {
 			let cell = {};
 			cell.$cell = $('<div class="grid-cell">');
 			cell.$cell_inner = $('<div class="grid-cell-inner">');
+			cell.$cell_text = $('<div class="grid-cell-text">');
 			cell.$cell.attr('data-pos', [i, j].join(','));
-			row.$row.append(cell.$cell.append(cell.$cell_inner));
+			row.$row.append(cell.$cell.append(cell.$cell_inner.append(cell.$cell_text)));
 			row.cells.push(cell);
 		}
 		this.rows.push(row);
@@ -34,5 +34,14 @@ Renderer.prototype.init = function(grid) {
 
 Renderer.prototype.updateTile = function(r, c, tile) {
 	let cell = this.rows[r].cells[c];
-	cell.$cell_inner.prop('className', `grid-cell-inner tile-${Game.colors[tile.color]} tile-${tile.count}`);
+	let classes = ['grid-cell-inner'];
+	let delta = Game.getLimit(r, c) - tile.count;
+	if (delta < 0) {
+		classes.push('tile-bomb');
+	} else {
+		classes.push('tile-' + delta);
+	}
+	classes.push('tile-' + Game.colors[tile.color]);
+	cell.$cell_inner.prop('className', classes.join(' '));
+	cell.$cell_text.text(tile.count);
 };
