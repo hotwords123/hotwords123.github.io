@@ -38,6 +38,7 @@ GameManager.prototype.newGame = function(size) {
 GameManager.prototype.clearState = function() {
 	this.grid = null;
 	this.UI.update(null);
+	this.UI.showMessage(false);
 };
 
 GameManager.prototype.getLimit = function(r, c) {
@@ -83,6 +84,8 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	let next = [];
 	let self = this;
 
+	if (!this.grid) return;
+
 	queue.forEach(function(a) {
 		if (!self.canExplode(a[0], a[1])) return;
 		self.resetTile(a[0], a[1]);
@@ -98,15 +101,14 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 
 	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
 		this.UI.showMessage(true, this.colors[cp]);
+	}
+	if (next.length) {
+		setTimeout(function() {
+			self.bombTiles(next, cp);
+		}, this.anim_time);
 	} else {
-		if (next.length) {
-			setTimeout(function() {
-				self.bombTiles(next, cp);
-			}, this.anim_time);
-		} else {
-			this.state.toggle();
-			this.animating = false;
-		}
+		this.state.toggle();
+		this.animating = false;
 	}
 
 	this.UI.update(this.state);

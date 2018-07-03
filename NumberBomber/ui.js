@@ -34,7 +34,6 @@ let UIManager = (function() {
 		let self = this;
 		this.$newgame_btn.click(function() {
 			Game.clearState();
-			self.showMessage(false);
 		});
 		this.$grid_container.on('click', '.grid-cell', function() {
 			let pos = $(this).attr('data-pos').split(',');
@@ -71,13 +70,11 @@ let UIManager = (function() {
 		} else {
 			this.$message_win.hide();
 			this.sizeManager.show();
-			this.$grid_container.fadeOut(250);
 		}
 	};
 
 	ui.prototype.on_start = function() {
 		this.$message.fadeOut(250);
-		this.$grid_container.fadeIn(250);
 	};
 
 	uism.prototype.init = function() {
