@@ -250,11 +250,11 @@ body {
 }
 
 .grid-cell-inner.tile-red.tile-1 {
-	background: #f4cccc;
+	background: #f0cccc;
 }
 
 .grid-cell-inner.tile-red.tile-0 {
-	background: #f0c2c2;
+	background: #ecc0c0;
 }
 
 .grid-cell-inner.tile-red.tile-bomb {
@@ -271,11 +271,11 @@ body {
 }
 
 .grid-cell-inner.tile-blue.tile-1 {
-	background: #ccccf4;
+	background: #ccccf0;
 }
 
 .grid-cell-inner.tile-blue.tile-0 {
-	background: #c2c2f0;
+	background: #c0c0ec;
 }
 
 .grid-cell-inner.tile-blue.tile-bomb {
@@ -288,11 +288,29 @@ body {
 	top: 50%;
 	left: 50%;
 	transform: translate(-50%,-50%);
-	line-height: 30px;
-	font-size: 30px;
 	font-weight: 700;
 	color: #7f6a56;
 	transition: color .2s linear 0s;
+}
+
+.grid-container.text-large .grid-cell-text {
+	line-height: 36px;
+	font-size: 36px;
+}
+
+.grid-container.text-middle .grid-cell-text {
+	line-height: 30px;
+	font-size: 30px;
+}
+
+.grid-container.text-small .grid-cell-text {
+	line-height: 24px;
+	font-size: 24px;
+}
+
+.grid-container.text-tiny .grid-cell-text {
+	line-height: 20px;
+	font-size: 20px;
 }
 
 .grid-cell:hover .grid-cell-text {

@@ -92,14 +92,14 @@ let UIManager = (function() {
 
 	uism.prototype.initListeners = function() {
 		let self = this;
-		this.$btn_minus.click(function() {
-			self.current_size -= 2;
+		this.$btn_minus.click(function(e) {
+			self.current_size -= e.shiftKey ? 1 : 2;
 			if (self.current_size < 2) self.current_size = 2;
 			self.update();
 		});
-		this.$btn_plus.click(function() {
-			self.current_size += 2;
-			if (self.current_size > 16) self.current_size = 16;
+		this.$btn_plus.click(function(e) {
+			self.current_size += e.shiftKey ? 1 : 2;
+			if (self.current_size > 24) self.current_size = 24;
 			self.update();
 		});
 		this.$btn.click(function() {

@@ -31,6 +31,7 @@ Renderer.prototype.init = function(grid) {
 			this.updateTile(i, j, grid.cells[i][j]);
 		}
 	}
+	this.updateContainerClass();
 };
 
 Renderer.prototype.updateTile = function(r, c, tile) {
@@ -45,4 +46,17 @@ Renderer.prototype.updateTile = function(r, c, tile) {
 	classes.push('tile-' + this.Game.colors[tile.color]);
 	cell.$cell_inner.prop('className', classes.join(' '));
 	cell.$cell_text.text(tile.count);
+};
+
+Renderer.prototype.getTextSize = function() {
+	if (this.size >= 22) return 'tiny';
+	if (this.size >= 16) return 'small';
+	if (this.size >= 8) return 'middle';
+	return 'large';
+};
+
+Renderer.prototype.updateContainerClass = function() {
+	let classes = ['grid-container'];
+	classes.push('text-' + this.getTextSize());
+	this.$grid_container.prop('className', classes.join(' '));
 };
