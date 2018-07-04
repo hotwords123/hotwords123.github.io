@@ -69,41 +69,19 @@ GameManager.prototype.clearState = function() {
 	this.storage.clear();
 };
 
-GameManager.prototype.getLimit = function(r, c) {
-	let res = 4;
-	if (r === 0 || r === this.size - 1) --res;
-	if (c === 0 || c === this.size - 1) --res;
-	return res;
+GameManager.prototype.renderTile = function(r, c) {
+	this.renderer.updateTile(r, c, this.grid.cells[r][c]);
 };
 
-GameManager.prototype.isIn = function(r, c) {
-	return r >= 0 && r < this.size && c >= 0 && c < this.size;
-}
-
-GameManager.prototype.getTile = function(r, c) {
-	return this.grid.cells[r][c];
-}
-
-GameManager.prototype.renderTile = function(r, c) {
-	this.renderer.updateTile(r, c, this.getTile(r, c));
-}
+GameManager.prototype.increaseTile = function(r, c, color) {
+	let flag = this.grid.increaseTile(r, c, color);
+	this.renderTile(r, c);
+	return flag;
+};
 
 GameManager.prototype.resetTile = function(r, c) {
-	let tile = this.getTile(r, c);
-	tile.count -= this.getLimit(r, c);
+	this.grid.resetTile(r, c);
 	this.renderTile(r, c);
-}
-
-GameManager.prototype.canExplode = function(r, c) {
-	return this.getTile(r, c).count > this.getLimit(r, c);
-};
-
-GameManager.prototype.addTile = function(r, c, color) {
-	let tile = this.getTile(r, c);
-	++tile.count;
-	tile.color = color;
-	this.renderTile(r, c);
-	return this.canExplode(r, c);
 };
 
 GameManager.prototype.bombTiles = function(queue, cp) {
@@ -115,11 +93,11 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	if (!this.grid) return;
 
 	queue.forEach(function(a) {
-		if (!self.canExplode(a[0], a[1])) return;
+		if (!self.grid.canExplode(a[0], a[1])) return;
 		self.resetTile(a[0], a[1]);
 		vectors.forEach(function(v) {
 			let o = [a[0] + v[0], a[1] + v[1]];
-			if (self.isIn(o[0], o[1]) && self.addTile(o[0], o[1], cp)) {
+			if (self.grid.isIn(o[0], o[1]) && self.increaseTile(o[0], o[1], cp)) {
 				next.push(o);
 			}
 		});
@@ -153,7 +131,7 @@ GameManager.prototype.clickTile = function(r, c) {
 	let flag;
 	const cp = this.state.current_player;
 
-	flag = this.addTile(r, c, cp);
+	flag = this.increaseTile(r, c, cp);
 
 	if (flag) {
 		this.animating = true;

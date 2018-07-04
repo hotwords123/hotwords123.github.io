@@ -35,7 +35,7 @@ Renderer.prototype.init = function(grid) {
 Renderer.prototype.updateTile = function(r, c, tile) {
 	let cell = this.rows[r].cells[c];
 	let classes = ['grid-cell-inner'];
-	let delta = Game.getLimit(r, c) - tile.count;
+	let delta = Game.grid.getLimit(r, c) - tile.count;
 	if (delta < 0) {
 		classes.push('tile-bomb');
 	} else {

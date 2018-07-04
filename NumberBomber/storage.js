@@ -2,7 +2,7 @@
 'use strict';
 
 function LocalStorageManager() {
-	this.key_state = 'NumberBomber_gameState';
+	this.key_state = 'NumberBomberAI_gameState';
 	this.version = '1.0';
 }
 
