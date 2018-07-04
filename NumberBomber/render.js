@@ -1,7 +1,8 @@
 
 'use strict';
 
-function Renderer() {
+function Renderer(Game) {
+	this.Game = Game;
 	this.$grid_container = $('.grid-container');
 }
 
@@ -35,13 +36,13 @@ Renderer.prototype.init = function(grid) {
 Renderer.prototype.updateTile = function(r, c, tile) {
 	let cell = this.rows[r].cells[c];
 	let classes = ['grid-cell-inner'];
-	let delta = Game.grid.getLimit(r, c) - tile.count;
+	let delta = this.Game.grid.getLimit(r, c) - tile.count;
 	if (delta < 0) {
 		classes.push('tile-bomb');
 	} else {
 		classes.push('tile-' + delta);
 	}
-	classes.push('tile-' + Game.colors[tile.color]);
+	classes.push('tile-' + this.Game.colors[tile.color]);
 	cell.$cell_inner.prop('className', classes.join(' '));
 	cell.$cell_text.text(tile.count);
 };

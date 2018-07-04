@@ -1,9 +1,7 @@
 
 'use strict';
 
-let Game;
-
 $(document).ready(function() {
-	Game = new GameManager();
+	let Game = new GameManager();
 	Game.checkStorage();
 });

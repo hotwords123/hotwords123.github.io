@@ -1,6 +1,29 @@
 
 'use strict';
 
+function deepClone(pt, o) {
+	return Object.assign(Object.create(pt), cloneObject(o));
+}
+
+function cloneObject(o) {
+	if (typeof o !== 'object') return o;
+	let r;
+	if (o instanceof Array) {
+		r = [];
+		for (let i = 0; i < o.length; ++i) {
+			r.push(cloneObject(o[i]));
+		}
+		return r;
+	}
+	r = {};
+	for (let i in o) {
+		if (o.hasOwnProperty(i)) {
+			r[i] = cloneObject(o[i]);
+		}
+	}
+	return r;
+}
+
 function State(grid) {
 	this.step = 0;
 	this.current_player = 0;
@@ -18,14 +41,14 @@ State.prototype.toggle = function() {
 };
 
 State.from = function(obj) {
-	return Object.assign(Object.create(State.prototype), obj);
+	return deepClone(State.prototype, obj);
 };
 
 function GameManager() {
 	this.colors = ['red', 'blue'];
 	this.anim_time = 300;
-	this.UI = new UIManager();
-	this.renderer = new Renderer(this.anim_time);
+	this.UI = new UIManager(this);
+	this.renderer = new Renderer(this);
 	this.storage = new LocalStorageManager();
 }
 

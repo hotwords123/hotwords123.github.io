@@ -3,14 +3,16 @@
 
 let UIManager = (function() {
 
-	function ui() {
+	function ui(Game) {
+		this.Game = Game;
 		this.init();
 		this.initSizeManager();
 		this.initListeners();
 		this.update(null);
 	}
 
-	function uism() {
+	function uism(Game) {
+		this.Game = Game;
 		this.init();
 		this.initListeners();
 	}
@@ -27,17 +29,17 @@ let UIManager = (function() {
 	};
 
 	ui.prototype.initSizeManager = function() {
-		this.sizeManager = new uism();
+		this.sizeManager = new uism(this.Game);
 	};
 
 	ui.prototype.initListeners = function() {
 		let self = this;
 		this.$newgame_btn.click(function() {
-			Game.clearState();
+			self.Game.clearState();
 		});
 		this.$grid_container.on('click', '.grid-cell', function() {
 			let pos = $(this).attr('data-pos').split(',');
-			Game.clickTile(+pos[0], +pos[1]);
+			self.Game.clickTile(+pos[0], +pos[1]);
 		});
 	};
 
@@ -102,7 +104,7 @@ let UIManager = (function() {
 		});
 		this.$btn.click(function() {
 			self.hide();
-			Game.newGame(self.current_size);
+			self.Game.newGame(self.current_size);
 		});
 	};
 

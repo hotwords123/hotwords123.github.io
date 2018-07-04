@@ -67,7 +67,7 @@ Grid.prototype.resetTile = function(r, c) {
 };
 
 Grid.from = function(obj) {
-	return Object.assign(Object.create(Grid.prototype), obj);
+	return deepClone(Grid.prototype, obj);
 };
 
 function Tile(color, count) {
