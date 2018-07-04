@@ -112,6 +112,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	const vectors = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 	let next = [];
 	let self = this;
+	let won = false;
 
 	if (!this.grid) return;
 
@@ -129,6 +130,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	this.state.load(this.grid);
 
 	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
+		won = true;
 		this.storage.clear();
 		this.UI.showMessage(true, this.colors[cp]);
 	}
@@ -136,7 +138,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 		setTimeout(function() {
 			self.bombTiles(next, cp);
 		}, this.anim_time);
-	} else {
+	} else if (!won) {
 		this.state.toggle();
 		this.animating = false;
 		this.save();
