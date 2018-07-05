@@ -2,8 +2,8 @@
 'use strict';
 
 function LocalStorageManager() {
-	this.key_state = 'NumberBomberAI_v2_gameState';
-	this.version = '2.0';
+	this.key_state = 'NumberBomberAI_gameState';
+	this.version = '1.0';
 }
 
 LocalStorageManager.prototype.get = function() {
@@ -20,20 +20,17 @@ LocalStorageManager.prototype.clear = function() {
 	localStorage.removeItem(this.key_state);
 };
 
-LocalStorageManager.prototype.save = function(state, grid, players) {
+LocalStorageManager.prototype.save = function(state, grid) {
 	try {
-		localStorage.setItem(this.key_state, this.make(state, grid, players));
+		localStorage.setItem(this.key_state, this.make(state, grid));
 	} catch (err) {}
 };
 
-LocalStorageManager.prototype.make = function(state, grid, players) {
+LocalStorageManager.prototype.make = function(state, grid) {
 	let res = {};
 	res.version = this.version;
 	res.grid = grid;
 	res.state = state;
-	res.players = [];
-	res.players[0] = players[0].type;
-	res.players[1] = players[1].type;
 	return JSON.stringify(res);
 };
 
@@ -45,6 +42,5 @@ LocalStorageManager.prototype.parse = function(str) {
 	let res = {};
 	res.grid = obj.grid;
 	res.state = obj.state;
-	res.players = obj.players;
 	return res;
 };

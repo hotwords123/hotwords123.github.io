@@ -106,24 +106,20 @@ body {
 	transform: translateY(-50%);
 }
 
-.game-btn {
-	font-size: 17px;
-	font-weight: 600;
-	line-height: 17px;
-	text-align: center;
-	height: 17px;
-	color: #fff;
-	background: #8f7a66;
-	border-radius: 3px;
-	cursor: pointer;
-}
-
 .newgame-btn {
 	display: block;
 	position: absolute;
 	right: 0;
 	top: 50%;
 	padding: 16px 20px;
+	font-size: 17px;
+	font-weight: 600;
+	line-height: 17px;
+	height: 16px;
+	color: #fff;
+	background: #8f7a66;
+	border-radius: 3px;
+	cursor: pointer;
 	transform: translateY(-50%);
 }
 
@@ -149,41 +145,29 @@ body {
 	background: rgba(255, 255, 255, 0.5);
 }
 
-.game-options-table {
-	display: table;
-	margin: 10px 0;
-}
-
-.game-options-table > div {
-	display: table-row;
+.game-size-container > div {
 	height: 50px;
+	text-align: center;
 }
 
-.game-options-table > div > div {
-	display: table-cell;
-	vertical-align: middle;
-}
-
-.game-options-table > div > div:last-child {
-	padding-left: 20px;
-}
-
-.game-options-title {
+.game-size-title {
 	font-size: 19px;
 	font-weight: 700;
+	line-height: 50px;
 	color: #433;
-}
-
-.game-player-btn {
-	display: inline-block;
-	margin-left: 7px;
-	padding: 12px 0;
-	width: 135px;
 }
 
 .game-size-minus, .game-size-plus {
 	margin: 0 6px;
-	padding: 7px;
+	padding: 8px 8px;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 16px;
+	height: 16px;
+	color: #fff;
+	background: #8f7a66;
+	border-radius: 3px;
+	cursor: pointer;
 }
 
 .game-size-text {
@@ -199,9 +183,18 @@ body {
 	border-radius: 3px;
 }
 
-.game-start-btn {
+.game-size-btn {
 	display: inline-block;
-	padding: 12px 25px;
+	padding: 12px 40px;
+	font-size: 17px;
+	font-weight: 600;
+	text-align: center;
+	line-height: 17px;
+	height: 16px;
+	color: #fff;
+	background: #8f7a66;
+	border-radius: 3px;
+	cursor: pointer;
 }
 
 .game-win-message > div {
@@ -226,9 +219,100 @@ body {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	display: flex;
-	flex-direction: column;
-	border-left: 1px solid #aaa;
-	border-top: 1px solid #aaa;
+	display: table;
+	border-collapse: collapse;
 	z-index: 1000;
+}
+
+.grid-row {
+	display: table-row;
+}
+
+.grid-cell {
+	display: table-cell;
+	cursor: pointer;
+	border: 1px solid #aaa;
+}
+
+.grid-cell-inner {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	transition: background .2s linear 0s;
+}
+
+.grid-cell-inner.tile-red.tile-3 {
+	background: #ffe4e4;
+}
+
+.grid-cell-inner.tile-red.tile-2 {
+	background: #f7dddd;
+}
+
+.grid-cell-inner.tile-red.tile-1 {
+	background: #f0cccc;
+}
+
+.grid-cell-inner.tile-red.tile-0 {
+	background: #ecc0c0;
+}
+
+.grid-cell-inner.tile-red.tile-bomb {
+	transition: none !important;
+	animation: shineRed linear .1s 0s 5 forwards alternate;
+}
+
+.grid-cell-inner.tile-blue.tile-3 {
+	background: #e4e4ff;
+}
+
+.grid-cell-inner.tile-blue.tile-2 {
+	background: #ddddf7;
+}
+
+.grid-cell-inner.tile-blue.tile-1 {
+	background: #ccccf0;
+}
+
+.grid-cell-inner.tile-blue.tile-0 {
+	background: #c0c0ec;
+}
+
+.grid-cell-inner.tile-blue.tile-bomb {
+	transition: none !important;
+	animation: shineBlue linear .1s 0s 5 forwards alternate;
+}
+
+.grid-cell-text {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%,-50%);
+	font-weight: 700;
+	color: #7f6a56;
+	transition: color .2s linear 0s;
+}
+
+.grid-container.text-large .grid-cell-text {
+	line-height: 36px;
+	font-size: 36px;
+}
+
+.grid-container.text-middle .grid-cell-text {
+	line-height: 30px;
+	font-size: 30px;
+}
+
+.grid-container.text-small .grid-cell-text {
+	line-height: 24px;
+	font-size: 24px;
+}
+
+.grid-container.text-tiny .grid-cell-text {
+	line-height: 20px;
+	font-size: 20px;
+}
+
+.grid-cell:hover .grid-cell-text {
+	color: #433;
 }

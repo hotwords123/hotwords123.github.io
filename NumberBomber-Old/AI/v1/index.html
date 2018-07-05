@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>Number Bomber</title>
+	<link rel="stylesheet" href="game.css">
+	<link rel="stylesheet" href="animation.css">
+	<script src="/jquery-3.3.1.min.js"></script>
+	<script src="ui.js"></script>
+	<script src="grid.js"></script>
+	<script src="storage.js"></script>
+	<script src="render.js"></script>
+	<script src="AI.js"></script>
+	<script src="game_manager.js"></script>
+	<script src="game.js"></script>
+</head>
+<body>
+	<div class="main-container">
+		<div class="main">
+			<div class="header">
+				<h1 class="title-text">NumBomber</h1>
+				<div class="scores-container">
+					<div class="scores-step"></div>
+					<div class="scores-red"></div>
+					<div class="scores-blue"></div>
+				</div>
+			</div>
+			<div class="above-game">
+				<span class="game-intro">Increase the numbers and make them <strong>bomb</strong>!</span>
+				<span class="newgame-btn">New Game</span>
+			</div>
+			<div class="game-container">
+				<div class="game-message">
+					<div class="game-size-container">
+						<div>
+							<span class="game-size-title">Board Size</span>
+						</div>
+						<div>
+							<span class="game-size-minus">&lt;</span>
+							<span class="game-size-text">8</span>
+							<span class="game-size-plus">&gt;</span>
+						</div>
+						<div>
+							<span class="game-size-btn">Go!</span>
+						</div>
+					</div>
+					<div class="game-win-message" style="display: none;">
+						<div>
+							<span class="game-win-title">Congratulations!</span>
+						</div>
+						<div>
+							<span class="game-win-text"><span class="game-win-color"></span> won!</span>
+						</div>
+					</div>
+				</div>
+				<div class="grid-container"></div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

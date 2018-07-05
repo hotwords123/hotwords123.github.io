@@ -27,7 +27,6 @@ function cloneObject(o) {
 function State(grid) {
 	this.step = 0;
 	this.current_player = 0;
-	this.ended = false;
 	this.load(grid);
 }
 
@@ -41,44 +40,21 @@ State.prototype.toggle = function() {
 	this.current_player ^= 1;
 };
 
-State.prototype.end = function() {
-	this.step ++;
-	this.ended = true;
-}
-
 State.from = function(obj) {
 	return deepClone(State.prototype, obj);
 };
 
 function GameManager() {
-	let self = this;
 	this.colors = ['red', 'blue'];
-	this.player_types = [];
+	this.players = {};
+	this.players.human = 0;
+	this.players.AI = 1;
 	this.anim_time = 300;
-	this.players = null;
-	this.grid = null;
-	this.state = null;
-	this.reacters = {};
-	this.addReacter('human', HumanReacter);
-	this.addReacter('AI', AIReacter);
-	this.act_interface = function(r, c) {
-		if (self.animating || !self.grid || self.grid.cells[r][c].color != self.state.current_player) return false;
-		self.act(r, c);
-		return true;
-	};
-	this.UI = new UIManager(this);
-	this.renderer = new Renderer(this);
+	this.UI = new UIManager();
+	this.renderer = new Renderer(this.anim_time);
 	this.storage = new LocalStorageManager();
+	this.AI = new AI(this.players.AI, 150);
 }
-
-GameManager.prototype.addReacter = function(id, proc) {
-	this.player_types.push(id);
-	this.reacters[id] = proc;
-};
-
-GameManager.prototype.createPlayer = function(type, color) {
-	return new Player(type, this.reacters[type], color);
-};
 
 GameManager.prototype.checkStorage = function() {
 	try {
@@ -92,37 +68,31 @@ GameManager.prototype.checkStorage = function() {
 };
 
 GameManager.prototype.save = function() {
-	this.storage.save(this.state, this.grid, this.players);
+	this.storage.save(this.state, this.grid);
 };
 
-GameManager.prototype.newGame = function(size, obj) {
-	obj = obj || {};
+GameManager.prototype.newGame = function(size, obj, reverse) {
 	this.size = size;
 	this.tiles_count = size * size;
 	this.animating = false;
-	this.players = [];
-	this.players[0] = this.createPlayer(obj.players[0], 0);
-	this.players[1] = this.createPlayer(obj.players[1], 1);
-	this.AI_count = 0;
-	if (obj.players[0] === 'AI') ++this.AI_count;
-	if (obj.players[1] === 'AI') ++this.AI_count;
-	this.grid = obj.grid ? Grid.from(obj.grid) : new Grid(size);
-	this.state = obj.state ? State.from(obj.state) : new State(this.grid);
+	if (obj) {
+		this.grid = Grid.from(obj.grid);
+		this.state = State.from(obj.state);
+	} else {
+		this.grid = new Grid(size);
+		this.state = new State(this.grid);
+		if (reverse) this.state.current_player ^= 1;
+	}
+	this.renderer.init(this.grid);
 	this.UI.on_start();
 	this.UI.update(this.state);
-	this.renderer.init(this.grid);
 	this.save();
-	this.require_act();
+	this.on_toggle();
 };
 
 GameManager.prototype.clearState = function() {
 	this.grid = null;
 	this.state = null;
-	if (this.players) {
-		this.players[0].release();
-		this.players[1].release();
-		this.players = null;
-	}
 	this.UI.update(null);
 	this.UI.showMessage(false);
 	this.storage.clear();
@@ -148,6 +118,7 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	const vectors = [[0, 1], [0, -1], [1, 0], [-1, 0]];
 	let next = [];
 	let self = this;
+	let won = false;
 
 	if (!this.grid) return;
 
@@ -164,33 +135,28 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 
 	this.state.load(this.grid);
 
-	if (!this.state.ended && this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
-		this.state.end();
+	if (this.state['tiles_' + this.colors[cp]] === this.tiles_count) {
+		won = true;
 		this.storage.clear();
-		this.UI.showMessage(true, cp);
+		this.UI.showMessage(true, cp === this.players.human);
 	}
-	
 	if (next.length) {
 		setTimeout(function() {
 			self.bombTiles(next, cp);
 		}, this.anim_time);
-	} else {
-		if (!this.state.ended) {
-			this.state.toggle();
-			this.save();
-			this.require_act();
-		}
+	} else if (!won) {
+		this.state.toggle();
+		this.on_toggle();
 		this.animating = false;
+		this.save();
 	}
 
 	this.UI.update(this.state);
 };
 
-GameManager.prototype.require_act = function() {
-	this.players[this.state.current_player].require_act(this.act_interface, this.state, this.grid);
-};
-
 GameManager.prototype.act = function(r, c) {
+
+	if (this.animating || this.grid.cells[r][c].color != this.state.current_player) return;
 
 	let self = this;
 	let arr = [];
@@ -206,7 +172,7 @@ GameManager.prototype.act = function(r, c) {
 		}, this.anim_time);
 	} else {
 		this.state.toggle();
-		this.require_act();
+		this.on_toggle();
 	}
 
 	this.state.load(this.grid);
@@ -214,4 +180,29 @@ GameManager.prototype.act = function(r, c) {
 	if (!flag) this.save();
 
 	this.UI.update(this.state);
+};
+
+GameManager.prototype.clickTile = function(r, c) {
+	if (this.animating || this.grid.cells[r][c].color !== this.players.human) return;
+	this.act(r, c);
+};
+
+GameManager.prototype.on_toggle = function() {
+	if (this.state.current_player === this.players.AI) {
+		let self = this;
+		setTimeout(function() {
+			self.require_AI();
+		}, this.anim_time);
+	}
+};
+
+GameManager.prototype.require_AI = function() {
+	let pos = this.AI.think(Grid.from(this.grid), State.from(this.state));
+	if (!pos) {
+		throw new Error("AIError: position not provided")
+	}
+	if (this.grid.cells[pos[0]][pos[1]].color !== this.players.AI) {
+		throw new Error("AIError: invalid position");
+	}
+	this.act(pos[0], pos[1]);
 };

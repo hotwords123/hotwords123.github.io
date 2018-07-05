@@ -6,12 +6,12 @@ let UIManager = (function() {
 	function ui(Game) {
 		this.Game = Game;
 		this.init();
-		this.initSizeManager();
+		this.initOptionsManager();
 		this.initListeners();
 		this.update(null);
 	}
 
-	function uism(Game) {
+	function uiom(Game) {
 		this.Game = Game;
 		this.init();
 		this.initListeners();
@@ -20,26 +20,22 @@ let UIManager = (function() {
 	ui.prototype.init = function() {
 		this.$message = $('.game-message');
 		this.$message_win = $('.game-win-message');
-		this.$message_win_color = $('.game-win-color');
+		this.$message_win_title = $('.game-win-title');
+		this.$message_win_text = $('.game-win-text');
 		this.$scores_step = $('.scores-step');
 		this.$scores_red = $('.scores-red');
 		this.$scores_blue = $('.scores-blue');
-		this.$grid_container = $('.grid-container');
 		this.$newgame_btn = $('.newgame-btn');
 	};
 
-	ui.prototype.initSizeManager = function() {
-		this.sizeManager = new uism(this.Game);
+	ui.prototype.initOptionsManager = function() {
+		this.optionsManager = new uiom(this.Game);
 	};
 
 	ui.prototype.initListeners = function() {
 		let self = this;
 		this.$newgame_btn.click(function() {
 			self.Game.clearState();
-		});
-		this.$grid_container.on('click', '.grid-cell', function() {
-			let pos = $(this).attr('data-pos').split(',');
-			self.Game.clickTile(+pos[0], +pos[1]);
 		});
 	};
 
@@ -67,12 +63,23 @@ let UIManager = (function() {
 	ui.prototype.showMessage = function(isWin, param) {
 		this.$message.fadeIn(250);
 		if (isWin) {
-			this.sizeManager.hide();
+			this.optionsManager.hide();
 			this.$message_win.show();
-			this.$message_win_color.text(param);
+			if (this.Game.AI_count === 1) {
+				if (this.Game.players[param].type === 'human') {
+					this.$message_win_title.text('Congratulations!');
+					this.$message_win_text.text('You won!');
+				} else {
+					this.$message_win_title.text('Oops!');
+					this.$message_win_text.text('You lose!');
+				}
+			} else {
+				this.$message_win_title.text('Congratulations!');
+				this.$message_win_text.text('The ' + this.Game.colors[param] + ' one won!');
+			}
 		} else {
 			this.$message_win.hide();
-			this.sizeManager.show();
+			this.optionsManager.show();
 		}
 	};
 
@@ -80,44 +87,69 @@ let UIManager = (function() {
 		this.$message.fadeOut(250);
 	};
 
-	uism.prototype.init = function() {
-		this.$container = $('.game-size-container');
-		this.$btn_minus = $('.game-size-minus');
-		this.$btn_plus = $('.game-size-plus');
-		this.$text = $('.game-size-text');
-		this.$btn = $('.game-size-btn');
+	uiom.prototype.init = function() {
+		this.$container = $('.game-options-container');
+		this.$player_0 = $('.game-player-btn-0');
+		this.$player_1 = $('.game-player-btn-1');
+		this.$size_minus = $('.game-size-minus');
+		this.$size_plus = $('.game-size-plus');
+		this.$size_text = $('.game-size-text');
+		this.$start_btn = $('.game-start-btn');
 		this.current_size = 8;
+		this.current_players = [0, 0];
+		this.player_type_desc = {
+			'human': 'Player',
+			'AI': 'AI'
+		};
 		this.update();
 	};
 
-	uism.prototype.initListeners = function() {
+	uiom.prototype.initListeners = function() {
 		let self = this;
-		this.$btn_minus.click(function(e) {
+		this.$player_0.click(function() {
+			if (++self.current_players[0] === self.Game.player_types.length) {
+				self.current_players[0] = 0;
+			}
+			self.update();
+		});
+		this.$player_1.click(function() {
+			if (++self.current_players[1] === self.Game.player_types.length) {
+				self.current_players[1] = 0;
+			}
+			self.update();
+		});
+		this.$size_minus.click(function(e) {
 			self.current_size -= e.shiftKey ? 1 : 2;
 			if (self.current_size < 2) self.current_size = 2;
 			self.update();
 		});
-		this.$btn_plus.click(function(e) {
+		this.$size_plus.click(function(e) {
 			self.current_size += e.shiftKey ? 1 : 2;
 			if (self.current_size > 24) self.current_size = 24;
 			self.update();
 		});
-		this.$btn.click(function() {
+		this.$start_btn.click(function() {
+			let obj = {};
 			self.hide();
-			self.Game.newGame(self.current_size);
+			obj.players = [];
+			obj.players[0] = self.Game.player_types[self.current_players[0]];
+			obj.players[1] = self.Game.player_types[self.current_players[1]];
+			self.Game.newGame(self.current_size, obj);
 		});
 	};
 
-	uism.prototype.show = function() {
+	uiom.prototype.show = function() {
 		this.$container.fadeIn(250);
 	};
 
-	uism.prototype.hide = function() {
+	uiom.prototype.hide = function() {
 		this.$container.hide();
 	};
 
-	uism.prototype.update = function() {
-		this.$text.text(this.current_size);
+	uiom.prototype.update = function() {
+		this.$size_text.text(this.current_size);
+		this.$player_0.text(this.player_type_desc[this.Game.player_types[this.current_players[0]]]);
+		this.$player_1.text(this.player_type_desc[this.Game.player_types[this.current_players[1]]]);
 	};
 
 	return ui;

@@ -4,14 +4,13 @@
 	<meta charset="utf-8">
 	<title>Number Bomber</title>
 	<link rel="stylesheet" href="game.css">
-	<link rel="stylesheet" href="tile.css">
+	<link rel="stylesheet" href="animation.css">
 	<script src="/jquery-3.3.1.min.js"></script>
 	<script src="ui.js"></script>
 	<script src="grid.js"></script>
 	<script src="storage.js"></script>
 	<script src="render.js"></script>
 	<script src="AI.js"></script>
-	<script src="player_manager.js"></script>
 	<script src="game_manager.js"></script>
 	<script src="game.js"></script>
 </head>
@@ -28,44 +27,21 @@
 			</div>
 			<div class="above-game">
 				<span class="game-intro">Increase the numbers and make them <strong>bomb</strong>!</span>
-				<span class="game-btn newgame-btn">New Game</span>
+				<span class="newgame-btn">New Game</span>
 			</div>
 			<div class="game-container">
 				<div class="game-message">
-					<div class="game-options-container">
-						<div class="game-options-title" style="font-size: 22px; text-align: center;">
-							<span>Game Options</span>
+					<div class="game-size-container">
+						<div>
+							<span class="game-size-title">Board Size</span>
 						</div>
-						<div class="game-options-table">
-							<div>
-								<div>
-									<span class="game-options-title">Player 1 (RED)</span>
-								</div>
-								<div>
-									<span class="game-btn game-player-btn game-player-btn-0"></span>
-								</div>
-							</div>
-							<div>
-								<div>
-									<span class="game-options-title">Player 2 (BLUE)</span>
-								</div>
-								<div>
-									<span class="game-btn game-player-btn game-player-btn-1"></span>
-								</div>
-							</div>
-							<div>
-								<div>
-									<span class="game-options-title">Board Size</span>
-								</div>
-								<div>
-									<span class="game-btn game-size-minus">&lt;</span>
-									<span class="game-size-text">8</span>
-									<span class="game-btn game-size-plus">&gt;</span>
-								</div>
-							</div>
+						<div>
+							<span class="game-size-minus">&lt;</span>
+							<span class="game-size-text">8</span>
+							<span class="game-size-plus">&gt;</span>
 						</div>
-						<div style="text-align: center;">
-							<span class="game-btn game-start-btn">Go!</span>
+						<div>
+							<span class="game-size-btn">Go!</span>
 						</div>
 					</div>
 					<div class="game-win-message" style="display: none;">

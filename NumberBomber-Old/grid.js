@@ -50,10 +50,6 @@ Grid.prototype.isIn = function(r, c) {
 	return r >= 0 && r < this.size && c >= 0 && c < this.size;
 };
 
-Grid.prototype.isAlarmed = function(r, c) {
-	return this.cells[r][c].count === this.getLimit(r, c);
-};
-
 Grid.prototype.canExplode = function(r, c) {
 	return this.cells[r][c].count > this.getLimit(r, c);
 };
