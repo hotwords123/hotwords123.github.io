@@ -1,0 +1,28 @@
+
+# TEST RESULT
+
+RED   BLUE  SIZE WIN
+AI.v1 AI.v1 4    2
+AI.v1 AI.v2 4    2
+AI.v1 AI    4    2 (1 RE)
+AI.v2 AI.v1 4    2
+AI.v2 AI.v2 4    1
+AI.v2 AI    4    1
+AI    AI.v1 4    2
+AI    AI.v2 4    1
+AI    AI    4    1
+AI.v1 AI.v1 6    1
+AI.v1 AI.v2 6    2
+AI.v1 AI    6    1
+AI.v2 AI.v1 6    2
+AI.v2 AI.v2 6    1
+AI.v2 AI    6    1
+AI    AI.v1 6    2
+AI    AI.v2 6    2
+AI    AI    6    1
+AI.v1 AI.v2 8    1
+AI.v1 AI    8    1
+AI.v2 AI.v1 8    2
+AI.v2 AI    8    2
+AI    AI.v1 8    2
+AI    AI.v2 8    1
