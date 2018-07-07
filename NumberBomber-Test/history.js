@@ -11,5 +11,4 @@ $(document).ready(function() {
 		});
 	Game.storage.history_mode = true;
 	Game.UI.ready();
-	Game.checkStorage();
 });
