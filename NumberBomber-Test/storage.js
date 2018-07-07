@@ -5,6 +5,8 @@ function LocalStorageManager(Game) {
 	this.key_state = 'NumberBomberAI_v2_gameState';
 	this.key_history = 'NumberBomberAI_v2_history';
 	this.version = '2.1';
+	this.version_history = '1.0';
+	this.history_mode = false;
 	this.Game = Game;
 }
 
@@ -19,10 +21,12 @@ LocalStorageManager.prototype.get = function() {
 };
 
 LocalStorageManager.prototype.clear = function() {
+	if (this.history_mode) return;
 	localStorage.removeItem(this.key_state);
 };
 
 LocalStorageManager.prototype.save = function() {
+	if (this.history_mode) return;
 	try {
 		localStorage.setItem(this.key_state, this.make());
 	} catch (err) {}
@@ -49,7 +53,9 @@ LocalStorageManager.prototype.parse = function(str) {
 };
 
 LocalStorageManager.prototype.saveHistory = function(won) {
+	if (this.history_mode) return;
 	let obj = {};
+	obj.version = this.version_history;
 	obj.won = won;
 	obj.size = this.Game.size;
 	obj.start_time = this.Game.start_time;
@@ -67,4 +73,13 @@ LocalStorageManager.prototype.saveHistory = function(won) {
 	try {
 		localStorage.setItem(this.key_history, JSON.stringify(arr));
 	} catch (err) {}
+};
+
+LocalStorageManager.prototype.getHistory = function() {
+	try {
+		let arr = JSON.parse(localStorage.getItem(this.key_history));
+		return arr && arr instanceof Array ? arr : [];
+	} catch (err) {
+		return [];
+	}
 };

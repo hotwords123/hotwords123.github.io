@@ -67,7 +67,6 @@ let UIManager = (function() {
 	};
 
 	ui.prototype.showMessage = function(isWin, param) {
-		this.$message.fadeIn(250);
 		if (isWin) {
 			this.optionsManager.hide();
 			this.$message_win.show();
@@ -87,6 +86,7 @@ let UIManager = (function() {
 			this.$message_win.hide();
 			this.optionsManager.show();
 		}
+		this.$message.fadeIn(250);
 	};
 
 	ui.prototype.on_start = function() {

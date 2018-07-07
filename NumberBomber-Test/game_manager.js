@@ -50,7 +50,7 @@ State.from = function(obj) {
 	return deepClone(State.prototype, obj);
 };
 
-function GameManager() {
+function GameManager(UIManager, Renderer, LocalStorageManager, reacters) {
 	let self = this;
 	this.colors = ['red', 'blue'];
 	this.player_types = [];
@@ -61,11 +61,9 @@ function GameManager() {
 	this.state = null;
 	this.history = null;
 	this.reacters = {};
-	this.addReacter('human', HumanReacter);
-	this.addReacter('AI', createAIReacterClass(AI));
-	this.addReacter('AI.v1', createAIReacterClass(AI_v1));
-	this.addReacter('AI.v2', createAIReacterClass(AI_v2));
-	this.addReacter('AI.XMJ', createAIReacterClass(AI_XMJ));
+	for (let i in reacters) {
+		this.addReacter(i, reacters[i]);
+	}
 	this.act_interface = function(r, c) {
 		if (self.animating || !self.grid || self.grid.cells[r][c].color != self.state.current_player) return false;
 		self.act(r, c);
@@ -195,12 +193,12 @@ GameManager.prototype.bombTiles = function(queue, cp) {
 	if (next.length) {
 		this.setBombTimeout(next, cp);
 	} else {
+		this.animating = false;
 		if (!this.state.ended) {
 			this.state.toggle();
 			this.storage.save();
 			this.require_act();
 		}
-		this.animating = false;
 	}
 
 	this.UI.update(this.state);
