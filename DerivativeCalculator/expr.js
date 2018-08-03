@@ -115,6 +115,7 @@ class Coef {
 Coef.zero = new Coef(0, {});
 Coef.one = new Coef(1, {});
 Coef.m_one = new Coef(-1, {});
+Coef.two = new Coef(2, {});
 
 class Expr {
     constructor(type) {
@@ -335,6 +336,7 @@ class StdExpr extends Expr {
 Expr.zero = Coef.zero.toExpr();
 Expr.one = Coef.one.toExpr();
 Expr.m_one = Coef.m_one.toExpr();
+Expr.two = Coef.two.toExpr();
 Expr.x = new StdExpr(Coef.one, 1);
 
 class FuncExpr extends Expr {
@@ -405,7 +407,53 @@ FuncExpr.addFunction('tan', {
         return Math.tan(a);
     },
     calcDerivative(a) {
-        return Expr.one.divide(new FuncExpr('cos', a).pow(Expr.fromNumber(2)));
+        return Expr.one.divide(new FuncExpr('cos', a).pow(Expr.two));
+    }
+});
+FuncExpr.addFunction('cot', {
+    calc(a) {
+        return 1 / Math.tan(a);
+    },
+    calcDerivative(a) {
+        return Expr.m_one.divide(new FuncExpr('sin', a).pow(Expr.two));
+    }
+});
+FuncExpr.addFunction('asin', {
+    calc(a) {
+        return Math.asin(a);
+    },
+    calcDerivative(a) {
+        return Expr.one.divide(
+            Expr.one.minus(a.pow(Expr.two))
+                .pow(Expr.fromNumber(0.5)));
+    }
+});
+FuncExpr.addFunction('acos', {
+    calc(a) {
+        return Math.acos(a);
+    },
+    calcDerivative(a) {
+        return Expr.m_one.divide(
+            Expr.one.minus(a.pow(Expr.two))
+                .pow(Expr.fromNumber(0.5)));
+    }
+});
+FuncExpr.addFunction('atan', {
+    calc(a) {
+        return Math.atan(a);
+    },
+    calcDerivative(a) {
+        return Expr.one.divide(
+            Expr.one.plus(a.pow(Expr.two)));
+    }
+});
+FuncExpr.addFunction('acot', {
+    calc(a) {
+        return Math.atan(1 / a);
+    },
+    calcDerivative(a) {
+        return Expr.m_one.divide(
+            Expr.one.plus(a.pow(Expr.two)));
     }
 });
 FuncExpr.addFunction('ln', {
@@ -490,7 +538,7 @@ class OprExpr extends Expr {
             case '/':
                 return v.multiply(u.getDerivative())
                     .minus(u.multiply(v.getDerivative()))
-                    .divide(v.pow(Expr.fromNumber(2)));
+                    .divide(v.pow(Expr.two));
             case '^': case 'pow': {
                 let f1 = u.isDatum(), f2 = v.isDatum();
                 if (f1 && f2) return Expr.zero;
