@@ -1,10 +1,6 @@
 
 'use strict';
 
-function cutpx(a) {
-    return +a.match(/^(.+)px$/)[1];
-}
-
 function fillString(str, cnt) {
     let res = '', tmp = str;
     while (cnt) {
@@ -44,7 +40,7 @@ function showError(err) {
                     arr.push('Expressions stack:');
                     if (!err.exprstk.length) arr.push('<empty>');
                     else err.exprstk.forEach(function(a, i) {
-                        arr.push(`${i}=${a.toString()}`);
+                        arr.push(`${i}=${a instanceof Expr ? a.toString() : JSON.stringify(a)}`);
                     });
                 }
                 if (err.oprstk && err.oprstk instanceof Array) {
@@ -53,8 +49,12 @@ function showError(err) {
                     if (!err.oprstk.length) arr.push('<empty>');
                     else {
                         err.oprstk.forEach(function(a, i) {
-                            arr.push(`${i}=${a[0]} at ${a[1]}`);
-                            tmpstr[a[1]] = '^';
+                            if (a[1] !== -1) {
+                                arr.push(`${i}=${a[0]} at ${a[1]}`);
+                                tmpstr[a[1]] = '^';
+                            } else {
+                                arr.push(`${i}=${a[0]}`);
+                            }
                         });
                         arr.push(err.fullstr);
                         arr.push(tmpstr.join(''));

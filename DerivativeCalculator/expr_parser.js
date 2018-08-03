@@ -93,30 +93,26 @@ let ExprParser = (function() {
         if (!str) error('expression must not be empty');
         
         // check invalid characters
-        let t = str.match(/[^a-zA-Z0-9.,+\-*\/^()\[\]]/);
-        if (t !== null) error(`invalid character ${t[0]}`, t.index);
+        let tinv = str.match(/[^a-zA-Z0-9.,+\-*\/^()\[\]]/);
+        if (tinv !== null) error(`invalid character ${tinv[0]}`, tinv.index);
 
         // check brackets
-        let tmp = [], pos = [], p, q;
+        let bstack = [], pos = [];
         for (let i = 0; i < str.length; ++i) {
             let p = lb.indexOf(str[i]),
                 q = rb.indexOf(str[i]);
             if (p !== -1) {
-                tmp.push(p);
+                bstack.push(p);
                 pos.push(i);
             }
             if (q !== -1) {
-                if (!tmp.length) error('no matching left bracket', i);
-                let p = tmp.pop();
+                if (!bstack.length) error('no matching left bracket', i);
+                let p = bstack.pop();
                 if (p !== q) error(`unexpected ${str[i]} ("${rb[p]}" expected)`, i);
                 pos.pop();
             }
         }
         if (pos.length) error('no matching right bracket', pos.pop());
-
-        // check demical points
-        let resdp = str.match(/(\.\d*|[a-zA-Z])\./);
-        if (resdp !== null) error('unexpected .', resdp.index + resdp[0].length - 1);
 
         // preprocess functions
         let fn = [];
@@ -144,7 +140,7 @@ let ExprParser = (function() {
             if (!o) error("invalid operator " + opr, i);
             if (expr.length < 2) error("unexpected operator " + opr, i);
             let b = expr.pop();
-            let a = expr.pop();console.log(`Calc ${a} ${opr} ${b}`)
+            let a = expr.pop();
             expr.push(o.calc(a, b));
         }
 
@@ -196,7 +192,7 @@ let ExprParser = (function() {
                         expr.push(f.name);
                         oprs.push(['[', i]);
                         expr.push([]);
-                        oprs.push([',', i]);
+                        oprs.push([',', -1]);
                         break;
                     case '(':
                         if (lastType === 1) pushopr('*.', i);
@@ -212,7 +208,7 @@ let ExprParser = (function() {
                     case ',':
                         if (lastType !== 1) error("unexpected , (expected expression)", i);
                         pushopr(',', i);
-                        if (!oprs.length || top(oprs)[0] !== ',') {
+                        if (oprs.length < 2 || oprs[oprs.length - 2][0] !== '[') {
                             error("unexpected , (not in arguments list)", i);
                         }
                         if (top(expr).length === 2) error('too much arguments for function', i);
@@ -245,7 +241,7 @@ let ExprParser = (function() {
             error('unexpected end of expression (expected expression)', str.length);
         }
 
-        pushopr(')', str.length);
+        pushopr(')', -1);
 
         if (expr.length > 1) error('more than one expression (might be a bug)', pos);
         return expr[0];

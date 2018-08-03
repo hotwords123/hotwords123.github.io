@@ -46,6 +46,7 @@ class Highlighter {
             'border[Top,Right,Bottom,Left][Width,Style]',
             'lineHeight'
         ];
+        let $src = this.$src;
         let offset = this.$src.offset();
         let zIndex = +this.$src.css('zIndex');
         let css = {
@@ -55,7 +56,6 @@ class Highlighter {
             'height': this.$src.height(),
             'zIndex': isNaN(zIndex) ? 1 : zIndex + 1
         };
-        let $src = this.$src;
         function expandStyle(pre, str) {
             let p = str.indexOf('[');
             if (p === -1) {
@@ -101,11 +101,13 @@ class Highlighter {
                 self.selecting = true;
             }
         }).on('mouseup', function() {
+            if (self.clicking) {
             self.clicking = false;
+                self.delayUpdateCursor();
             if (self.selecting) {
                 self.selecting = false;
             }
-            self.delayUpdateCursor();
+            }
         });
     }
     getValue(val) {

@@ -47,6 +47,8 @@ span.ui-btn {
     font-family: sans-serif;
     line-height: 15px;
     cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
     user-select: none;
     transition: all linear .25s 0s;
 }
