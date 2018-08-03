@@ -438,6 +438,9 @@ class OprExpr extends Expr {
                 return b.indexOf(a) !== -1;
             });
         }
+        if (opr === '^') { // test for omitted multipliers
+            if (/[\da-zA-Z][a-zA-Z(\[]/.test(str.replace(/[a-zA-Z][a-zA-Z\d]*\[/g, '['))) return true;
+        }
         let p = getPriority(opr);
         let tmp = '', cnt = 0;
         for (let i = 0; i < str.length; ++i) {
