@@ -2,87 +2,48 @@
 <html>
 <head>
 	<meta charset="utf-8">
-    <link rel="bookmark" type="image/x-icon" href="/favicon.ico" />
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="bookmark" type="image/x-icon" href="/favicon.ico">
+	<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	<link rel="stylesheet" type="text/css" href="/css/mdui.min.css">
+	<script type="text/javascript" src="/js/mdui.min.js"></script>
 	<title>Hotwords' Space</title>
-	<style>
-		body {
-			background: #fcfcfc;
-			font-family: Consolas, "Courier New", sans-serif;
-		}
-		div.header {
-			width: 100%;
-			height: 100px;
-			padding: 20px 40px;
-			background: #ecf6fc;
-		}
-		div.header-title {
-			height: 60px;
-			line-height: 60px;
-			font-size: 40px;
-			color: #aac7d7;
-			text-align: left;
-		}
-		div.header-subtitle {
-			height: 40px;
-			line-height: 40px;
-			font-size: 20px;
-			color: #bbccdd;
-			text-align: left;
-		}
-		div.topbar {
-			width: 100%;
-			height: 60px;
-			display: flex;
-			flex-direction: row;
-			justify-content: space-between;
-		}
-		div.topbar > div {
-			font-size: 20px;
-			line-height: 60px;
-			flex-grow: 1;
-			text-align: center;
-			height: 100%;
-			background: #f7f7f7;
-			cursor: pointer;
-			transition: background .25s linear 0s;
-		}
-		div.topbar > div > a {
-			text-decoration: none;
-			color: #999;
-			transition: color .25s linear 0s;
-		}
-		div.topbar > div:hover {
-			background: #f0f0f0;
-		}
-		div.topbar > div:hover > a {
-			display: inline-block;
-			width: 100%;
-			height: 100%;
-			color: #333;
-		}
-		div.main {
-			font-size: 18px;
-		}
-	</style>
 </head>
-<body>
-	<div class="header">
-		<div class="header-title">Hotwords' Space</div>
-		<div class="header-subtitle">Enjoy rowing life!</div>
-	</div>
-	<div class="topbar">
-		<div>
-			<a href="/1536/" target="_blank">1536</a>
+<body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-orange">
+	<header class="mdui-appbar mdui-appbar-fixed">
+		<div class="mdui-toolbar mdui-color-theme">
+			<a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple">
+				<i class="mdui-icon material-icons">menu</i>
+			</a>
+			<span class="mdui-typo-title">Hotwords' Space</span>
+			<a class="mdui-btn" mdui-menu="{target: '#header-menu-projects', covered: false}">Projects</a>
+			<ul id="header-menu-projects" class="mdui-menu">
+				<li class="mdui-menu-item">
+					<a href="/1536/" class="mdui-ripple">1536</a>
+				</li>
+				<li class="mdui-menu-item">
+					<a href="/65536/" class="mdui-ripple">65536</a>
+				</li>
+				<li class="mdui-menu-item">
+					<a href="/233666/" class="mdui-ripple">233666</a>
+				</li>
+				<li class="mdui-menu-item">
+					<a href="/NumberBomber/" class="mdui-ripple">Number Bomber</a>
+				</li>
+				<li class="mdui-menu-item">
+					<a href="/six/" class="mdui-ripple">Six!</a>
+				</li>
+  				<li class="mdui-divider"></li>
+				<li class="mdui-menu-item">
+					<a href="/planet-evolution/" class="mdui-ripple">Planet Evolution</a>
+				</li>
+			</ul>
+			<div class="mdui-toolbar-spacer"></div>
+			<a href="javascript:;" class="mdui-btn mdui-btn-icon mdui-ripple">
+				<i class="mdui-icon material-icons">search</i>
+			</a>
 		</div>
-		<div>
-			<a href="/65536/" target="_blank">65536</a>
-		</div>
-	</div>
-	<div class="main">
-		<p style="text-align: center;">
-		Hello, world!
-		</p>
-	</div>
+	</header>
 </body>
 </html>
