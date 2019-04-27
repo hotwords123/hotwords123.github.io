@@ -94,12 +94,45 @@ Grid.prototype.removeTile = function (tile) {
   this.cells[tile.x][tile.y] = null;
 };
 
+// Move a tile and its representation
+Grid.prototype.moveTile = function (tile, cell) {
+  this.cells[tile.x][tile.y] = null;
+  this.cells[cell.x][cell.y] = tile;
+  tile.updatePosition(cell);
+};
+
 Grid.prototype.withinBounds = function (position) {
   return position.x >= 0 && position.x < this.size &&
          position.y >= 0 && position.y < this.size;
 };
 
-Grid.prototype.getSmoothness = function () {
+Grid.prototype.findFarthestPosition = function (cell, vector) {
+  var previous;
+
+  // Progress towards the vector direction until an obstacle is found
+  do {
+    previous = cell;
+    cell     = { x: previous.x + vector.x, y: previous.y + vector.y };
+  } while (this.withinBounds(cell) &&
+           this.cellAvailable(cell));
+
+  return {
+    farthest: previous,
+    next: cell // Used to check if a merge is required
+  };
+};
+
+// Save all tile positions and remove merger info
+Grid.prototype.prepareTiles = function () {
+  this.eachCell(function (x, y, tile) {
+    if (tile) {
+      tile.mergedFrom = null;
+      tile.savePosition();
+    }
+  });
+};
+
+Grid.prototype.smoothness = function () {
   var result = 0;
   for (var dir = 0; dir < 2; ++dir) {
     for (var x = 0; x < this.size; ++x) {
@@ -110,14 +143,16 @@ Grid.prototype.getSmoothness = function () {
           var value = Math.log2(this.cellContent(cell).value);
           if (numbers.length) {
             var first = numbers[numbers.length - 1];
-            result -= 0.8 * Math.pow(Math.abs(value - first), 0.85);
+            var rate = Math.pow(Math.max(value, first), 0.4);
+            result -= 0.4 * rate * Math.pow(Math.abs(value - first), 0.8);
             if (numbers.length > 1) {
               var second = numbers[numbers.length - 2];
               var temp = (second - first) * (second - value);
-              if (temp < 0) {
-                result -= 1.5 * Math.pow(-temp, 0.7);
+              var rate2 = Math.pow(Math.max(value, first, second), 0.4);
+              if (temp > 0) {
+                result -= 1.0 * rate2 * Math.pow(temp, 0.8);
               } else {
-                result += 2;
+                result += 0.5 * rate2;
               }
             }
           }
@@ -127,6 +162,30 @@ Grid.prototype.getSmoothness = function () {
     }
   }
   return result;
+};
+
+Grid.prototype.maxMerge = function () {
+  var result = 0;
+  for (var dir = 0; dir < 2; ++dir) {
+    for (var x = 0; x < this.size; ++x) {
+      var last = 0;
+      for (var y = 0; y < this.size; ++y) {
+        var cell = dir ? { x: y, y: x } : { x: x, y: y };
+        if (this.cellOccupied(cell)) {
+          var value = this.cellContent(cell).value;
+          if (last && value === last && value > result) {
+            result = value;
+          }
+          last = value;
+        }
+      }
+    }
+  }
+  return result;
+};
+
+Grid.prototype.movesAvailable = function () {
+  return this.cellsAvailable() || this.maxMerge() > 0;
 };
 
 Grid.prototype.serialize = function () {
